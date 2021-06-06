@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Modelo PitaBot</title>
+		<style>
+			body { margin: 0; }
+			canvas { display: block; }
+		</style>
+	</head>
+	<body>
+		<script src="js/three.js"></script>
+		<script>
+			var giroX = 0;
+			var giroY = 0;
+			
+			const scene = new THREE.Scene();
+			const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+			const renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			// Luz ambiente para la escena
+			var light = new THREE.AmbientLight(0x404040); // soft white light
+			scene.add(light);
+			// Luz direccional para darle chicha
+			var directionalLight = new THREE.DirectionalLight(0xffffff);
+			directionalLight.position.set(1, 2, 3).normalize();
+			scene.add(directionalLight);
+
+			var geo = new THREE.BoxGeometry();
+			var mat = new THREE.MeshPhongMaterial( { color: 0x333333 } );
+			var pitaBot = new THREE.Mesh( geo, mat );
+			
+			geo = new THREE.BoxGeometry(0.4,0.4,0.4);
+			mat = new THREE.MeshPhongMaterial( { color: 0xffff00 } );
+			var pico = new THREE.Mesh(geo, mat);
+			pico.rotation.y=-Math.PI/4+0.2;
+			pico.rotation.z=Math.PI/4;
+			pico.position.x=0.4;
+			pico.position.z=-0.1;
+			
+			pitaBot.add(pico);
+			
+			geo = new THREE.BoxGeometry(0.2,0.2,0.2);
+			mat = new THREE.MeshPhongMaterial( { color: 0xffffff } );
+			var ojo = new THREE.Mesh(geo, mat);
+			ojo.position.x = 0.45;
+			ojo.position.z = 0.2;
+			ojo.position.y = 0.2;
+			
+			pitaBot.add(ojo);
+			
+			ojo = new THREE.Mesh(geo, mat);
+			ojo.position.x = 0.45;
+			ojo.position.z = 0.2;
+			ojo.position.y=-0.2;
+
+			pitaBot.add(ojo);
+			
+			geo = new THREE.BoxGeometry(0.1,0.1,0.1);
+			mat = new THREE.MeshPhongMaterial( { color: 0x111111 } );
+			var pupila = new THREE.Mesh(geo, mat);
+			pupila.position.x = 0.55;
+			pupila.position.z = 0.2;
+			pupila.position.y = 0.2;
+			
+			pitaBot.add(pupila);
+			
+			pupila = new THREE.Mesh(geo, mat);
+			pupila.position.x = 0.55;
+			pupila.position.z = 0.2;
+			pupila.position.y=-0.2;
+
+			pitaBot.add(pupila);
+			
+			geo = new THREE.BoxGeometry(0.2,0.2,0.4);
+			mat = new THREE.MeshPhongMaterial( { color: 0x333333 } );
+			var pata = new THREE.Mesh(geo, mat);
+			pata.position.z = -0.65;
+			pata.position.y = 0.2;
+			pitaBot.add(pata);
+			
+			var pata = new THREE.Mesh(geo, mat);
+			pata.position.z = -0.65;
+			pata.position.y = -0.2;
+			pitaBot.add(pata);
+			
+			geo = new THREE.BoxGeometry(0.7,0.7,0.2);
+			mat = new THREE.MeshPhongMaterial( { color: 0x333333 } );
+			var pies = new THREE.Mesh(geo, mat);
+			pies.position.z = -0.9;
+			pitaBot.add(pies);
+
+			geo = new THREE.BoxGeometry(0.7,0.2,0.4);
+			mat = new THREE.MeshPhongMaterial( { color: 0xaa6644 } );
+			var ala = new THREE.Mesh(geo, mat);
+			ala.position.z = -0.1;
+			ala.position.y = 0.6;
+			ala.rotation.x = 0.3;
+			pitaBot.add(ala);
+
+			ala = new THREE.Mesh(geo, mat);
+			ala.position.z = -0.1;
+			ala.position.y = -0.6;
+			ala.rotation.x = -0.3;
+			pitaBot.add(ala);
+
+			geo = new THREE.BoxGeometry(0.7,0.2,0.4);
+			mat = new THREE.MeshPhongMaterial( { color: 0xaa3322 } );
+			var cresta = new THREE.Mesh(geo, mat);
+			cresta.position.z=0.6;
+			pitaBot.add(cresta);
+
+			scene.add( pitaBot );
+
+			camera.position.z = 4;
+
+			const keyDown = function(e) {
+				switch(e.key) {
+					case 'ArrowUp': giroX += 0.05; break;
+					case 'ArrowDown': giroX -= 0.05;  break;
+					case 'ArrowLeft': giroY += 0.05;  break;
+					case 'ArrowRight': giroY -= 0.05;  break;
+				}
+			};
+
+			const animate = function () {
+				requestAnimationFrame( animate );
+
+				//pitaBot.rotation.x += 0.01;
+				//pitaBot.rotation.y += 0.01;
+				pitaBot.rotation.x = giroX;
+				pitaBot.rotation.z = giroY;
+				renderer.render( scene, camera );
+			};
+
+			document.body.addEventListener('keydown', keyDown, false);
+
+			animate();
+		</script>
+	</body>
+</html>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg8"
+   inkscape:version="1.0.2 (e86c870879, 2021-01-15, custom)"
+   sodipodi:docname="Título.svg"
+   inkscape:export-filename="C:\Users\kishp\Desktop\Juego PitaBot\Título.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300">
+  <defs
+     id="defs2">
+    <rect
+       x="153.87953"
+       y="117.34878"
+       width="65.304971"
+       height="4.5037911"
+       id="rect861" />
+    <rect
+       x="54.295703"
+       y="137.86605"
+       width="87.073294"
+       height="33.278012"
+       id="rect855" />
+    <rect
+       x="51.293176"
+       y="100.58467"
+       width="105.58888"
+       height="31.276327"
+       id="rect849" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.0574425"
+     inkscape:cx="396.85039"
+     inkscape:cy="561.25984"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     inkscape:window-width="1360"
+     inkscape:window-height="705"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#e6e6e6;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;paint-order:markers stroke fill"
+       id="rect845"
+       width="125.53833"
+       height="62.769165"
+       x="19.016006"
+       y="98.496727"
+       inkscape:export-filename="C:\Users\kishp\Desktop\Juego PitaBot\img\titulo.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <image
+       sodipodi:absref="C:\Users\kishp\Desktop\Juego PitaBot\PitaBot.png"
+       xlink:href="PitaBot.png"
+       inkscape:export-filename="C:\Users\kishp\Desktop\Juego PitaBot\img\titulo.png"
+       width="34.882668"
+       height="42.248665"
+       preserveAspectRatio="none"
+       id="image843"
+       x="24.34384"
+       y="108.98519"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       id="text847"
+       style="font-size:19.7556px;line-height:1.25;font-family:Impact;white-space:pre;shape-inside:url(#rect849);-inkscape-font-specification:Impact;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;"
+       transform="translate(8.5071609,8.0067397)"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"
+       inkscape:export-filename="C:\Users\kishp\Desktop\Juego PitaBot\img\titulo.png"><tspan
+         x="51.292969"
+         y="120.36096"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.7556px;font-family:Impact;-inkscape-font-specification:Impact">Laberinto</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       id="text853"
+       style="font-size:1.41111px;line-height:1.25;font-family:Impact;white-space:pre;shape-inside:url(#rect855);-inkscape-font-specification:Impact;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;"
+       transform="translate(15.262848,-9.5080034)"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"
+       inkscape:export-filename="C:\Users\kishp\Desktop\Juego PitaBot\img\titulo.png"><tspan
+         x="54.294922"
+         y="154.81686"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.9333px;font-family:Impact;-inkscape-font-specification:Impact">PitaBot</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       id="text859"
+       style="line-height:1.25;font-family:Impact;font-size:1.41111111px;white-space:pre;shape-inside:url(#rect861);-inkscape-font-specification:Impact;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;" />
+  </g>
+</svg>

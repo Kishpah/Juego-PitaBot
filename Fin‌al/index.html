@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>PitaBot Maze</title>
+		<style>
+			body { margin: 0; }
+			canvas { display: block; }
+		</style>
+	</head>
+	<body>
+		<script src="js/three.min.js"></script>
+		<script>
+			var teclaDer, teclaIzq, teclaArr, teclaAb; //Aquí guardamos qué teclas están pulsadas
+			var giroX, giroY, topeGiroX, topeGiroY; //rotación actual de la base, y máximo que permitiremos rotar
+			var pasoIda, pasoVuelta; //velocidad de rotación cuando se pulsa una tecla, y velocidad de vuelta a la posición inicial
+			var posPitaX, posPitaY, movPitaX, movPitaY, vibracion; //Posición y Movimiento del PitaBot
+			var chocarX, chocarY; //Saber si chocamos o no
+			var proporcionMovimiento; //Cuánto se mueve el PitaBot según la inclinación del tablero
+			var tamPitaBot; //Tamaño del PitaBot
+			var cogerMaiz, finJuego; //Para indicar si hemos cogido maíz o no
+			
+			//Inicialización de variables
+			giroX=0;
+			giroY=0;
+			topeGiroX=0.1;
+			topeGiroY=0.1;
+			teclaDer = false;
+			teclaIzq = false;
+			teclaArr = false;
+			teclaAb = false;
+			pasoIda=0.02;
+			pasoVuelta=0.05;
+			
+			movX=0;
+			movY=0;
+			vibracion=0.07;
+			proporcionMovimiento = 0.4;
+			tamPitaBot=0.4;
+			cogerMaiz = false;
+			finJuego = false;
+
+			/*
+			var tableroBase =[1,1,1,1,1,1,1,1,1,1,
+							  1,0,0,0,0,0,0,0,0,1,
+							  1,0,0,0,0,0,0,0,0,1,
+							  1,0,0,0,0,0,0,0,0,1,
+							  1,0,0,0,0,0,0,0,0,1,
+							  1,0,0,0,0,0,0,0,0,1,
+							  1,0,0,0,0,0,0,0,0,1,
+							  1,0,0,0,0,0,0,0,0,1,
+							  1,0,0,0,0,0,0,0,0,1,
+							  1,1,1,1,1,1,1,1,1,1]
+			*/
+			/*
+			var tablero =[1,1,1,1,1,1,1,1,1,1,
+						  1,2,0,1,0,0,0,0,0,1,
+						  1,0,1,0,0,1,0,1,1,1,
+						  1,0,1,1,0,1,0,0,0,1,
+						  1,0,0,0,0,1,1,1,0,1,
+						  1,1,1,1,0,1,0,0,0,1,
+						  1,0,0,1,0,1,0,1,0,1,
+						  1,0,1,1,0,1,0,1,0,1,
+						  1,0,0,0,0,1,3,1,0,1,
+						  1,1,1,1,1,1,1,1,1,1]
+			*/
+			
+			var tablero = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+						   1,2,1,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,
+						   1,0,1,0,0,0,1,1,0,1,1,1,1,0,1,0,1,1,0,1,
+						   1,0,1,0,1,1,1,0,0,1,0,1,0,0,1,0,1,0,0,1,
+						   1,0,0,0,1,0,0,0,1,1,0,1,0,1,1,0,1,0,1,1,
+						   1,1,0,1,1,0,1,0,0,0,0,1,0,0,0,0,1,0,1,1,
+						   1,0,0,0,0,0,0,0,1,0,1,1,0,1,1,1,1,0,0,1,
+						   1,0,1,1,1,1,0,1,1,0,1,0,0,0,0,0,0,0,0,1,
+						   1,1,1,3,1,0,0,0,0,0,1,0,1,1,1,1,1,1,0,1,
+						   1,0,0,0,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,1,
+						   1,0,1,0,1,0,0,0,0,0,1,1,1,1,0,1,1,1,0,1,
+						   1,0,1,1,1,1,0,1,1,1,1,0,0,0,0,1,0,0,0,1,
+						   1,0,0,0,0,1,0,1,0,1,1,0,1,1,0,1,0,1,1,1,
+						   1,1,1,1,0,1,0,1,0,0,0,0,1,0,0,1,0,0,0,1,
+						   1,0,0,0,0,1,0,1,0,1,1,1,1,1,0,1,1,1,0,1,
+						   1,0,1,1,0,1,0,1,0,0,1,0,0,0,0,1,0,0,0,1,
+						   1,0,1,1,0,1,0,0,0,0,1,0,1,0,1,1,1,1,0,1,
+						   1,0,1,1,0,1,1,1,1,1,1,0,1,0,0,0,0,1,0,1,
+						   1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,1,
+						   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+					   
+			//Tamaño del tablero
+			var tamBase = Math.sqrt(tablero.length);
+
+			//Escena
+			const scene = new THREE.Scene();
+			const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+			/*
+			const listener = new THREE.AudioListener();
+			camera.add( listener );
+
+			// create a global audio source
+			const sound = new THREE.Audio( listener );
+
+			// load a sound and set it as the Audio object's buffer
+			const audioLoader = new THREE.AudioLoader();
+			audioLoader.load( 'snd/Buzz.ogg', function( buffer ) {
+				sound.setBuffer( buffer );
+				sound.setLoop( true );
+				sound.setVolume(1);
+				sound.play();
+			});
+			*/
+			
+			const renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+			
+			// Luz ambiente para la escena
+			var light = new THREE.AmbientLight(0x404040); // soft white light
+			scene.add(light);
+			// Luz direccional para darle chicha
+			var directionalLight = new THREE.DirectionalLight(0xffffff);
+			directionalLight.position.set(1, 2, 3).normalize();
+			scene.add(directionalLight);
+
+			//Creamos el tablero empezando por la base, del tamaño definido
+			var geometry = new THREE.BoxGeometry(tamBase,tamBase,1);
+			var materialSuelo = new THREE.MeshPhongMaterial( { color: 0xaaaaaa } );
+			var base = new THREE.Mesh( geometry, materialSuelo);
+			
+			//Creamos los muros internos del tablero
+			var geometry2 = new THREE.BoxGeometry(1,1,1);
+			var materialMuro = new THREE.MeshPhongMaterial({color: 0xaa6633});
+			
+			//Creamos nuestro PitaBot
+			var geo = new THREE.BoxGeometry();
+			var mat = new THREE.MeshPhongMaterial( { color: 0x222222 } );
+			var pitaBot = new THREE.Mesh( geo, mat );
+			
+			geo = new THREE.BoxGeometry(0.4,0.4,0.4);
+			mat = new THREE.MeshPhongMaterial( { color: 0xffff00 } );
+			var pico = new THREE.Mesh(geo, mat);
+			pico.rotation.y=-Math.PI/4+0.2;
+			pico.rotation.z=Math.PI/4;
+			pico.position.x=0.4;
+			pico.position.z=-0.1;
+			
+			pitaBot.add(pico);
+			
+			geo = new THREE.BoxGeometry(0.2,0.2,0.2);
+			mat = new THREE.MeshPhongMaterial( { color: 0xffffff } );
+			var ojo = new THREE.Mesh(geo, mat);
+			ojo.position.x = 0.45;
+			ojo.position.z = 0.2;
+			ojo.position.y = 0.2;
+			
+			pitaBot.add(ojo);
+			
+			ojo = new THREE.Mesh(geo, mat);
+			ojo.position.x = 0.45;
+			ojo.position.z = 0.2;
+			ojo.position.y=-0.2;
+
+			pitaBot.add(ojo);
+			
+			geo = new THREE.BoxGeometry(0.1,0.1,0.1);
+			mat = new THREE.MeshPhongMaterial( { color: 0x111111 } );
+			var pupila = new THREE.Mesh(geo, mat);
+			pupila.position.x = 0.55;
+			pupila.position.z = 0.2;
+			pupila.position.y = 0.2;
+			
+			pitaBot.add(pupila);
+			
+			pupila = new THREE.Mesh(geo, mat);
+			pupila.position.x = 0.55;
+			pupila.position.z = 0.2;
+			pupila.position.y=-0.2;
+
+			pitaBot.add(pupila);
+			
+			geo = new THREE.BoxGeometry(0.2,0.2,0.4);
+			mat = new THREE.MeshPhongMaterial( { color: 0x222222 } );
+			var pata = new THREE.Mesh(geo, mat);
+			pata.position.z = -0.65;
+			pata.position.y = 0.2;
+			pitaBot.add(pata);
+			
+			var pata = new THREE.Mesh(geo, mat);
+			pata.position.z = -0.65;
+			pata.position.y = -0.2;
+			pitaBot.add(pata);
+			
+			geo = new THREE.BoxGeometry(0.7,0.7,0.2);
+			mat = new THREE.MeshPhongMaterial( { color: 0x222222 } );
+			var pies = new THREE.Mesh(geo, mat);
+			pies.position.z = -0.9;
+			pitaBot.add(pies);
+
+			geo = new THREE.BoxGeometry(0.7,0.2,0.4);
+			mat = new THREE.MeshPhongMaterial( { color: 0xaa6644 } );
+			var ala = new THREE.Mesh(geo, mat);
+			ala.position.z = -0.1;
+			ala.position.y = 0.6;
+			ala.rotation.x = 0.3;
+			pitaBot.add(ala);
+
+			ala = new THREE.Mesh(geo, mat);
+			ala.position.z = -0.1;
+			ala.position.y = -0.6;
+			ala.rotation.x = -0.3;
+			pitaBot.add(ala);
+
+			geo = new THREE.BoxGeometry(0.7,0.2,0.4);
+			mat = new THREE.MeshPhongMaterial( { color: 0xaa3322 } );
+			var cresta = new THREE.Mesh(geo, mat);
+			cresta.position.z=0.6;
+			pitaBot.add(cresta);
+			
+			pitaBot.scale.x=tamPitaBot;
+			pitaBot.scale.y=tamPitaBot;
+			pitaBot.scale.z=tamPitaBot;
+			
+			geo = new THREE.BoxGeometry(0.3,0.3,0.3);
+			mat = new THREE.MeshPhongMaterial( { color : 0xffff00 } );
+			var millo = new THREE.Mesh(geo, mat);
+			millo.rotation.x=Math.PI/4;
+			millo.rotation.y=Math.PI/4;
+			
+			var i,j;
+			//Recorremos la información del nivel para crear los objetos necesarios
+			for(i=0; i<tamBase; i++){
+				for(j=0; j<tamBase; j++){
+					switch(tablero[i+(tamBase-1-j)*tamBase]){
+						case 1:
+							var muro = new THREE.Mesh(geometry2, materialMuro);
+							muro.position.z=1;
+							muro.position.y=j-tamBase/2+0.5;
+							muro.position.x=i-tamBase/2+0.5;
+							base.add(muro);
+							break;
+						case 2:
+							pitaBot.position.z=1;
+							posPitaY = j-tamBase/2+0.5;
+							pitaBot.position.y=posPitaY;
+							posPitaX=i-tamBase/2+0.5;
+							pitaBot.position.x=posPitaX;		
+							scene.add(pitaBot);
+							break;
+						case 3:
+							millo.position.z=1
+							millo.position.y = j-tamBase/2+0.5;
+							millo.position.x = i-tamBase/2+0.5;
+							scene.add(millo);
+							break;
+					}
+				}
+			}
+			
+			//Añadimos la base con sus muros a la escena
+			scene.add(base);
+		
+			//Separamos la cámara lo suficiente como para ver todo el tablero
+			camera.position.z = tamBase;
+			//camera.rotation.z = Math.PI;
+			
+			// Comprobación del teclado (marcamos las variables que indican si las teclas están pulsadas o no
+			const keyDown = function(e) {
+				switch(e.key) {
+					case 'ArrowUp': teclaArr=true; break;
+					case 'ArrowDown': teclaAb=true; break;
+					case 'ArrowLeft': teclaIzq=true; break;
+					case 'ArrowRight': teclaDer=true; break;
+				}
+			};
+
+			const keyUp = function(e) {
+				switch(e.key) {
+					case 'ArrowUp': teclaArr=false; break;
+					case 'ArrowDown': teclaAb=false; break;
+					case 'ArrowLeft': teclaIzq=false; break;
+					case 'ArrowRight': teclaDer=false; break;
+				}
+			};
+
+			const onWindowResize = function() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				renderer.render(scene, camera);
+			};
+			
+			document.body.addEventListener('keydown', keyDown, false);
+			document.body.addEventListener('keyup', keyUp, false);
+			window.addEventListener('resize', onWindowResize, false);
+    
+			const devuelveValorCasilla = function(posicionX, posicionY) {
+				var valor;
+				valor = tablero[Math.floor(posicionX)+(tamBase-1-Math.floor(posicionY))*tamBase]
+				return valor;
+			};
+			
+			const comprobarCasilla = function(posicionX, posicionY, movimientoX, movimientoY) {
+				var cmpX, cmpY, valorCasilla, ret;
+				ret = 0;
+				
+				//Comprobamos cada una de las cuatro esquinas del PitaBot
+				cmpX=posicionX+movimientoX+tamBase/2+tamPitaBot/2;
+				cmpY=posicionY+movimientoY+tamBase/2+tamPitaBot/2;
+				valorCasilla = devuelveValorCasilla(cmpX, cmpY);
+				if(valorCasilla!=0&&ret!=1) { ret = valorCasilla; };
+				cmpX=posicionX+movimientoX+tamBase/2+tamPitaBot/2;
+				cmpY=posicionY+movimientoY+tamBase/2-tamPitaBot/2;
+				valorCasilla = devuelveValorCasilla(cmpX, cmpY);
+				if(valorCasilla!=0&&ret!=1) { ret = valorCasilla; };
+				cmpX=posicionX+movimientoX+tamBase/2-tamPitaBot/2;
+				cmpY=posicionY+movimientoY+tamBase/2-tamPitaBot/2;
+				valorCasilla = devuelveValorCasilla(cmpX, cmpY);
+				if(valorCasilla!=0&&ret!=1) { ret = valorCasilla; };
+				cmpX=posicionX+movimientoX+tamBase/2-tamPitaBot/2;
+				cmpY=posicionY+movimientoY+tamBase/2+tamPitaBot/2;
+				valorCasilla = devuelveValorCasilla(cmpX, cmpY);
+				if(valorCasilla!=0&&ret!=1) { ret = valorCasilla; };
+				
+				return ret;
+			}
+			
+			const animate = function () {
+				requestAnimationFrame( animate );
+				
+				//Revisamos las teclas pulsadas
+				//Si hay alguna tecla pulsada, giramos el tablero, sin llegar al tope
+				if(teclaArr&&Math.abs(giroX)<topeGiroX) { giroX-=pasoIda }
+				if(teclaAb&&Math.abs(giroX)<topeGiroX) { giroX+=pasoIda }
+				if(teclaIzq&&Math.abs(giroY)<topeGiroY) { giroY-=pasoIda }
+				if(teclaDer&&Math.abs(giroY)<topeGiroY) { giroY+=pasoIda }
+				//En caso contrario movemos el tablero hasta dejarlo horizontal de nuevo
+				if(!(teclaArr||teclaAb)) {
+					if(giroX!=0){
+						if(Math.abs(giroX)<pasoVuelta){giroX=0;}
+						else{if(giroX>0){giroX-=pasoVuelta}else{giroX+=pasoVuelta}}
+					}
+				}
+				if(!(teclaDer||teclaIzq)) {
+					if(giroY!=0){
+						if(Math.abs(giroY)<pasoVuelta){giroY=0;}
+						else{if(giroY>0){giroY-=pasoVuelta}else{giroY+=pasoVuelta}}
+					}
+				}
+
+				//Calculamos el movimiento del PitaBot, proporcional a la inclinación del tablero
+				movPitaX = giroY*proporcionMovimiento;
+				movPitaY = -giroX*proporcionMovimiento;
+				//El PitaBot está vibrando, así que siempre se mueve una pequeña cantidad al azar.
+				movPitaX+=Math.random()*vibracion-vibracion/2;
+				movPitaY+=Math.random()*vibracion-vibracion/2;
+				
+				//Comprobamos si el movimiento va a hacernos chocar contra una pared
+				chocarX=false;
+				chocarY=false;
+				cogerMaiz=false;
+				
+				switch(comprobarCasilla(posPitaX, posPitaY, movPitaX, 0)){
+					case 1: chocarX = true; break;
+					case 3: cogerMaiz = true; break;
+				}
+				switch(comprobarCasilla(posPitaX, posPitaY, 0, movPitaY)){
+					case 1: chocarY = true; break;
+					case 3: cogerMaiz = true; break;
+				}
+				switch(comprobarCasilla(posPitaX, posPitaY, movPitaX, movPitaY)){
+					//case 1: chocarX = true; chocarY = true; break;
+					case 3: cogerMaiz = true; break
+				}
+				
+				//Si no chocamos, movemos el PitaBot lo indicado
+				if(!chocarX){
+					posPitaX+=movPitaX;
+				}
+				if(!chocarY){
+					posPitaY+=movPitaY;
+				}
+				
+				if(cogerMaiz&&!finJuego){
+					millo.scale.x*=1.3;
+					millo.scale.y*=1.3;
+					millo.scale.z*=1.3;
+					if(millo.scale.x>20){finJuego=true;scene.remove(millo);};
+				}
+				
+				pitaBot.rotation.z=3*Math.random()*vibracion-vibracion/2;
+				pitaBot.position.x=posPitaX;
+				pitaBot.position.y=posPitaY;
+				
+				millo.rotation.x +=0.02;
+				millo.rotation.y +=0.02;
+				millo.rotation.z +=0.02;
+				
+				
+				scene.rotation.x = giroX;
+				scene.rotation.y = giroY;
+
+				renderer.render( scene, camera );
+			};
+
+			animate();
+		</script>
+	</body>
+</html>
